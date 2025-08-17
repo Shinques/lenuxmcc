@@ -7,13 +7,15 @@
     <style>
         body { font-family: Arial; text-align:center; margin-top:50px; }
         input { padding: 5px; margin: 5px; width:200px; }
-        button { padding:5px 15px; margin:10px; }
+        button { padding:5px 15px; margin:10px; cursor:pointer; }
         .hidden { display:none; }
+        p { font-weight:bold; }
     </style>
 </head>
 <body>
     <h1>ShinWare Admin Paneli</h1>
 
+    <!-- Admin Giriş -->
     <div id="loginDiv">
         <input type="text" id="adminUser" placeholder="Admin kullanıcı adı">
         <input type="password" id="adminPass" placeholder="Admin şifre">
@@ -21,6 +23,7 @@
         <p id="loginMsg"></p>
     </div>
 
+    <!-- Panel -->
     <div id="panelDiv" class="hidden">
         <h2>Key Oluştur</h2>
         <input type="text" id="newUser" placeholder="Yeni kullanıcı adı">
@@ -45,7 +48,7 @@
                 document.getElementById("loginDiv").classList.add("hidden");
                 document.getElementById("panelDiv").classList.remove("hidden");
 
-                // JSON çek (isteğe bağlı)
+                // JSON çek (isteğe bağlı: listeyi göstermek için)
                 try {
                     const response = await fetch("/shinware.json");
                     data = await response.json();
@@ -70,7 +73,6 @@
             }
 
             try {
-                // Backend endpoint'e POST gönder
                 const res = await fetch("/api/add_key", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -80,6 +82,8 @@
                 const result = await res.json();
                 if(res.ok) {
                     msg.textContent = `✅ ${newUser} için key oluşturuldu: ${newKey}`;
+                    document.getElementById("newUser").value = "";
+                    document.getElementById("newKey").value = "";
                 } else {
                     msg.textContent = `❌ Hata: ${result.error}`;
                 }
