@@ -1,7 +1,7 @@
 {
-    "users": {
-        "Shinques": "ABC123",
-        "CraftRise": "CR3KEY"
-    },
-    "admin_key": "ADM1NKEY"
+  "admin": {
+    "username": "Admin",
+    "password": "123"
+  },
+  "users": {}
 }
