@@ -45,9 +45,9 @@
                 document.getElementById("loginDiv").classList.add("hidden");
                 document.getElementById("panelDiv").classList.remove("hidden");
 
-                // JSON çek (opsiyonel: listeyi göstermek için)
+                // JSON çek (isteğe bağlı)
                 try {
-                    const response = await fetch("https://plugin-lunex.vercel.app/shinware.json");
+                    const response = await fetch("/shinware.json");
                     data = await response.json();
                 } catch(err) {
                     console.error("JSON çekilemedi", err);
