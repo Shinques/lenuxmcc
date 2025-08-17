@@ -9,7 +9,7 @@
         input { padding: 5px; margin: 5px; width:200px; }
         button { padding:5px 15px; margin:10px; }
         .hidden { display:none; }
-    </style> //GPT yaptı amk
+    </style>
 </head>
 <body>
     <h1>ShinWare Admin Paneli</h1>
@@ -33,17 +33,6 @@
         const ADMIN_USERNAME = "Admin";
         const ADMIN_PASSWORD = "123";
 
-        async function fetchJSON() {
-            const response = await fetch("https://plugin-lunex.vercel.app/shinware.json");
-            return await response.json();
-        }
-
-        async function saveJSON(data) {
-            // Burası senin backend endpoint’in olmalı, fetch POST/PUT ile kaydedeceksin
-            console.log("Yeni JSON:", data);
-            alert("✅ Key siteye kaydedildi (backend gerekli)");
-        }
-
         let data = {};
 
         async function adminLogin() {
@@ -55,7 +44,16 @@
                 msg.textContent = "✅ Admin giriş başarılı!";
                 document.getElementById("loginDiv").classList.add("hidden");
                 document.getElementById("panelDiv").classList.remove("hidden");
-                data = await fetchJSON();
+
+                // JSON çek (opsiyonel: listeyi göstermek için)
+                try {
+                    const response = await fetch("https://plugin-lunex.vercel.app/shinware.json");
+                    data = await response.json();
+                } catch(err) {
+                    console.error("JSON çekilemedi", err);
+                    data = { users: {} };
+                }
+
             } else {
                 msg.textContent = "❌ Hatalı giriş!";
             }
@@ -71,9 +69,25 @@
                 return;
             }
 
-            data.users[newUser] = newKey;
-            await saveJSON(data);
-            msg.textContent = `✅ ${newUser} için key oluşturuldu: ${newKey}`;
+            try {
+                // Backend endpoint'e POST gönder
+                const res = await fetch("/api/add_key", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: newUser, key: newKey })
+                });
+
+                const result = await res.json();
+                if(res.ok) {
+                    msg.textContent = `✅ ${newUser} için key oluşturuldu: ${newKey}`;
+                } else {
+                    msg.textContent = `❌ Hata: ${result.error}`;
+                }
+
+            } catch(err) {
+                console.error(err);
+                msg.textContent = "❌ Key siteye kaydedilemedi (backend hatası)";
+            }
         }
     </script>
 </body>
